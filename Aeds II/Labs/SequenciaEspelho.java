@@ -1,4 +1,4 @@
-package AEDS2_2.Labs;
+package Labs;
 
 
 
@@ -26,7 +26,7 @@ public class SequenciaEspelho {
 
 
         }
-    
+        sc.close();
     }
 
     static String espelhar (String s){
@@ -42,6 +42,6 @@ public class SequenciaEspelho {
 
 
         return espelhado;
+        
     }
-
 }

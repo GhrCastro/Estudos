@@ -1,4 +1,4 @@
-package Tp02;
+
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -23,7 +23,7 @@ class Pokemon{
     //Leitura-->
     public Pokemon read(String id) {
         try {
-            File file = new File("/tmp/pokemon.csv");
+            File file = new File("C:/Users/gugsh/Documents/GitHub/Estudos/Aeds II/tmp/pokemon.csv"); //C:\Users\gugsh\Documents\GitHub\Estudos\Aeds II\tmp\pokemon.csv
             Scanner scanner = new Scanner(file);
             scanner.nextLine(); // Pula a linha de cabeçalho
     
@@ -336,8 +336,9 @@ class Pokemon{
     }
 }*/
 
-//Classe da Questão 01 do Tp02:
-public class Q02{
+//Classe da Questão 03 do Tp02:
+/*public class Q03{
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String entrada;
@@ -354,10 +355,31 @@ public class Q02{
             entrada = sc.nextLine();
         }
 
+        
 
-        for(Pokemon pokemon : pokemons){//itera sobre cada item do Array List de tipo Pokemon, chamado 'pokemons', ao criar um elemento 'pokemon'
-            pokemon.print();
+        entrada = sc.nextLine();
+        while(!entrada.equals("FIM")){
+            boolean yes = false;
+            String name = entrada.trim();
+            for(Pokemon pokemon : pokemons){
+                if(name.equals(pokemon.getName())){
+                    System.out.println("SIM");
+                    yes = true;
+                }
+            }
+            if(yes==false){
+                System.out.println("NAO");
+            }
+            entrada = sc.nextLine();
         }
+        
         sc.close();
+    }
+}*/
+
+//Classe da Questão 05 do Tp02:
+public class Q05 {
+    public static void main(String[] args) {
+        
     }
 }

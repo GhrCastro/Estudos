@@ -1,4 +1,4 @@
-public class insertionSort {
+/*public class insertionSort {
     private void Sort(int arr) {
         for (int i = 1; i < n; i++) {//o i começa com 1, pois quando temos apenas um elemento, o nosso conjunto já está ordenado, i aponta para o elemento a ser inserido no conjunto ordenado
             int tmp = array[i];
@@ -12,3 +12,4 @@ public class insertionSort {
             }
     }
 }
+*/

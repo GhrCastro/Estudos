@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define CSV_FILE_PATH "/tmp/pokemon.csv"
+#define CSV_FILE_PATH "/tmp/pokemon.csv" //C:\Users\gugsh\Documents\GitHub\Estudos\Aeds II\tmp\pokemon.csv
 #define IDNUBMERS_AND_MAXTAM_FILE 802
 #define MAX_BUFFER_SIZE 1000
 #define MAXTAM_LISTA 200
@@ -36,6 +36,7 @@ char **str_split(char*, const char);
 char *str_substring(const char *, size_t, size_t );
 char *str_trim(char *);
 void replace(char *,char,char);
+int comparaElementos(pokemon a, pokemon b);
 lista string_to_list(char[]);
 void inserir_fim(lista*, char[]);
 void mostrar_lista(lista*);
@@ -43,10 +44,12 @@ pokemon construtor(char id[], char generation[], char name[], char description[]
 pokemon construtor_vazio();
 void preencherVetor(pokemon pokemons[]);
 char *my_strsep(char **stringp, const char *delim);
+int pesquisa_binaria(pokemon [], char* , int);
+int comparar_pokemon(const void *a, const void *b);
 
 
 //Funções de uso geral-->
-
+//Str_split apresentou como resultado problemas de memory leak no passado, se possível, evite o seu uso!
 char** str_split( char *_Str, const char _Delimiter )
 {
     char** _Sequence = NULL;
@@ -141,6 +144,16 @@ void replace(char *string, char searchchar, char replacechar) {
         valueptr = strchr(valueptr + 1, searchchar);
     }
 }
+
+int comparaElementos(pokemon a, pokemon b){
+    int Comparison = strcmp(a.name, b.name);
+    if(Comparison != 0) {
+        return Comparison;
+    }//else {
+        //return strcmp(a.name, b.name);
+    //}
+    return Comparison;
+} 
 
 //<--Funções de uso geral
 
@@ -267,11 +280,12 @@ char *my_strsep(char **stringp, const char *delim) {
     return start;  // Retorna o token encontrado
 }
 
-
+/*Códigos de erro presentes: 002*/
+//Exception 002: Arquivo não encontrado
 void preencherVetor(pokemon pokemons[]) {
     FILE *file = fopen(CSV_FILE_PATH, "r");
     if (!file) {
-        printf("Arquivo não encontrado!\n");
+        printf("!!! This code particular Exception!!! Exception 002: Arquivo não encontrado\n");
         exit(1);
     }
 
@@ -401,27 +415,101 @@ void imprimir(pokemon pokemon) {
 
 
 
+//Função Q04-->
+int comparar_pokemon(const void *a, const void *b) {
+    const pokemon *p1 = (const pokemon *)a;
+    const pokemon *p2 = (const pokemon *)b;
+    return strcmp(p1->name, p2->name);
+}
+
+
+int pesquisa_binaria(pokemon *pokemons, char* name, int n){
+    int inicio,meio,fim;
+    inicio = 0; fim = n-1;
+
+    while(inicio <= fim){
+        meio = (inicio + fim) / 2;
+
+     int comparacao = strcmp(pokemons[meio].name, name);
+        
+        if(comparacao == 0){
+            return 1;  // Achou o Pokémon
+        } 
+        else if(comparacao > 0){
+            fim = meio - 1;
+        } 
+        else {
+            inicio = meio + 1;
+        }
+    }
+
+    return 0;
+}
+
+//<--Função Q04
+
+
+
 int main() {
-   char id[200];
+   char entrada[200];
    int result;
-   int i;
+   int i,j=0,count=0;
     //printf("1\n");
     pokemon pokemons[IDNUBMERS_AND_MAXTAM_FILE];
     preencherVetor(pokemons);
+    
+    pokemon *temp = malloc(IDNUBMERS_AND_MAXTAM_FILE*sizeof(pokemon));
 
     //printf("2\n");
-    scanf("%s" , id);
+    scanf("%s" , entrada);
 
-    while(strcmp(id,"FIM")!=0){
+    while(strcmp(entrada,"FIM")!=0){
 
         for(i=0; i< IDNUBMERS_AND_MAXTAM_FILE;i++){
-            result = strcmp(pokemons[i].id,id);
+            result = strcmp(pokemons[i].id,entrada);
             if(result == 0){
-                imprimir(pokemons[i]);
-                break;
+                temp[j] =  pokemons[i];
+                //printf("tmp:%s pokes:%s \n",temp[j].name,pokemons[i].name);
+                count++;
+                j++;
             }
         }
-        scanf("%s",id);
+        scanf("%s",entrada);
+    }
+    pokemon pokemons_salvos[count];
+
+    for(i=0; i < count; i++){
+    pokemons_salvos[i] = temp[i];
+    //printf("pokes:%s tmp:%s  \n",pokemons_salvos[i].name,temp[i].name);
+    }
+
+
+    free(temp);
+    // Imprime pokemons_salvos antes do qsort para verificar
+    /*printf("Pokémons salvos antes de ordenar:\n");
+    for (i = 0; i < count; i++) {
+        printf("ID: %s, Nome: %s\n", pokemons_salvos[i].id, pokemons_salvos[i].name);
+    }*/
+
+     // Ordena a lista de pokemons salvos por nome
+    qsort(pokemons_salvos, count, sizeof(pokemon), comparar_pokemon);
+    /*printf("Lista de Pokémons ordenada:\n");
+    for (i = 0; i < count; i++) {
+        printf("%s\n", pokemons_salvos[i].name);
+    }*/
+
+
+    scanf("%s", entrada);
+
+    while(strcmp(entrada,"FIM")!=0){
+        
+            if(pesquisa_binaria(pokemons_salvos,entrada,count)){
+                printf("SIM\n");
+            
+            }else{
+                printf("NAO\n");
+            }
+        scanf("%s",entrada);
     }
 
     return 0;
