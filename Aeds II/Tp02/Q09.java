@@ -1,4 +1,5 @@
 package Tp02;
+
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -378,7 +379,7 @@ class Pokemon{
 }*/
 
 //Classe da Questão 05 do Tp02:
-public class Q05 {
+class Q05 {
 
     public static void selection_sort(Pokemon[] pokes) {
     int fim = pokes.length;
@@ -397,7 +398,7 @@ public class Q05 {
 }
 
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String entrada;
         entrada=  sc.nextLine();
@@ -413,7 +414,6 @@ public class Q05 {
             entrada = sc.nextLine();
         }
 
-        sc.close();
         Pokemon []pokes = new Pokemon[pokemons.size()];
 
         int i=0;
@@ -423,6 +423,164 @@ public class Q05 {
         }
 
         selection_sort(pokes);
+
+        for(i=0;i<pokes.length;i++){
+            pokes[i].print();
+        }
+
+        sc.close();
+    } */
+}
+
+
+//Classe da Questão 07 do Tp02:
+ class Q07 {
+
+    public static void insertionSort(Pokemon []pokes){
+        for(int i=0;i<pokes.length;i++){
+            for(int j=i;j>0;j--){
+                if(pokes[j].getCaptureDate().compareTo(pokes[j-1].getCaptureDate())<0){
+                    Pokemon tmp = pokes[j];
+                    pokes[j] = pokes[j-1];
+                    pokes[j-1] = tmp;
+                }
+            }
+        }
+    }
+
+    /*public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String entrada;
+        entrada=  sc.nextLine();
+        
+        ArrayList<Pokemon> pokemons= new ArrayList<>();//Array dos pokemons que serão pegos pelos ids
+        
+        while(!entrada.equals("FIM")){
+            String id = entrada.trim();
+            
+            Pokemon pokemon = new Pokemon();
+            pokemon.read(id);
+            pokemons.add(pokemon);
+            entrada = sc.nextLine();
+        }
+        sc.close();
+
+        Pokemon []pokes = new Pokemon[pokemons.size()];
+
+        int i=0;
+        for(Pokemon pokemon : pokemons){
+            pokes[i] = pokemon;
+            i++;
+        }
+
+        insertionSort(pokes);
+
+        for(i=0;i<pokes.length;i++){
+            pokes[i].print();
+        }
+
+    }*/
+}
+
+
+public class Q09 {
+    //Método swap universal, está público para uso futuro em qualquer classe
+    public static void swap(Pokemon []array, int i, int j){
+        Pokemon tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+
+    //Método de comparação para a Q09 onde o critério é height, e desempate name, pode ser usado como base para outras questões->(Deve ser comentado primeiro caso seja reutilizado)
+    private static int compara(Pokemon a, Pokemon b) {
+        // Primeiro, compara a altura
+        if (a.getHeight() != b.getHeight()) {
+            return Double.compare(a.getHeight(), b.getHeight()); // Compara as alturas
+        } else {
+            // Se as alturas forem iguais, compara os nomes
+            return a.getName().compareTo(b.getName()); // Compara os nomes como critério de desempate
+        }
+    }
+
+    //Método para construir o heap
+    private static void construir(Pokemon []array, int tamHeap){
+        //Faz a "subida" dos elementos para formar um heap
+        for(int i= tamHeap; i>1 && compara(array[i-1],array[i/2-1])>0;i/=2){
+            swap(array, i-1, i/2-1);
+        }
+    }
+
+    //Método para reconstruir o heap após a troca
+    private static void reconstruir(Pokemon []array, int tamHeap){
+        int i=1;//Começa pelo primeiro elemento
+        //Enquanto o nó atual tiver filhos
+        while(i<=(tamHeap/2)){
+            int filho = getMaiorFilho(array, i, tamHeap);//Obtém o índice do maior filho.
+            //Se o nó atual for menor que o maior filho, troca
+            if(compara(array[i-1], array[filho-1])<0){
+                swap(array, i-1, filho-1);//Troca os elementos
+                i = filho; //Move par ao filho para continuar a reconstrução
+            }else{
+                i = tamHeap;//Se não houver troca, termina o loop
+            }
+
+        }
+    }
+
+    //Método para obter o índice do maior filho, privado pois é destinado apenas à heapSort
+    private static int getMaiorFilho(Pokemon []array, int i, int tamHeap){
+        //Se o nó atual tiver apenas o filho à esquerda
+        if(2 * i==tamHeap || compara(array[2* i -1], array[2*i])>0){
+            return 2*i;//Retorna o índice do filho à esquerda
+        }else{
+            return 2*i+1;//Retorna o índice do filho à direita
+        }
+    }
+
+    public static void heapSort(Pokemon []array){
+        int n = array.length;
+
+        //Construção do heap: converte a lista de Pokémon em um heap
+        for(int tamHeap = 2;tamHeap <=n; tamHeap++){
+            construir(array, tamHeap);//Chama o  método para construir o heap
+        }
+
+        //Ordenação propriamente dita
+        int tamHeap = n;//Inicializa o tamanho do heap
+        while(tamHeap > 1){//Enquanto houver mais de um elememnto do heap
+            swap(array,0,tamHeap - 1);//Troca o primeiro elemento com o último
+            tamHeap--;//Reduz o tamanho do heap
+            reconstruir(array, tamHeap);//Reconstrói o heap após a troca
+        }
+
+
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String entrada;
+        entrada=  sc.nextLine();
+        
+        ArrayList<Pokemon> pokemons= new ArrayList<>();//Array dos pokemons que serão pegos pelos ids
+        
+        while(!entrada.equals("FIM")){
+            String id = entrada.trim();
+            
+            Pokemon pokemon = new Pokemon();
+            pokemon.read(id);
+            pokemons.add(pokemon);
+            entrada = sc.nextLine();
+        }
+        sc.close();
+
+        Pokemon []pokes = new Pokemon[pokemons.size()];
+
+        int i=0;
+        for(Pokemon pokemon : pokemons){
+            pokes[i] = pokemon;
+            i++;
+        }
+
+        heapSort(pokes);
 
         for(i=0;i<pokes.length;i++){
             pokes[i].print();

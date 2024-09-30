@@ -1,4 +1,5 @@
 package Tp02;
+
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -378,7 +379,7 @@ class Pokemon{
 }*/
 
 //Classe da Questão 05 do Tp02:
-public class Q05 {
+/*class Deprecated_Q05 {
 
     public static void selection_sort(Pokemon[] pokes) {
     int fim = pokes.length;
@@ -397,7 +398,7 @@ public class Q05 {
 }
 
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String entrada;
         entrada=  sc.nextLine();
@@ -413,7 +414,6 @@ public class Q05 {
             entrada = sc.nextLine();
         }
 
-        sc.close();
         Pokemon []pokes = new Pokemon[pokemons.size()];
 
         int i=0;
@@ -423,6 +423,57 @@ public class Q05 {
         }
 
         selection_sort(pokes);
+
+        for(i=0;i<pokes.length;i++){
+            pokes[i].print();
+        }
+
+        sc.close();
+    } 
+}
+*/
+
+
+public class Q07 {
+
+    public static void insertionSort(Pokemon []pokes){
+        for(int i=0;i<pokes.length;i++){
+            for(int j=i;j>0;j--){
+                if(pokes[j].getCaptureDate().compareTo(pokes[j-1].getCaptureDate())<0){
+                    Pokemon tmp = pokes[j];
+                    pokes[j] = pokes[j-1];
+                    pokes[j-1] = tmp;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String entrada;
+        entrada=  sc.nextLine();
+        
+        ArrayList<Pokemon> pokemons= new ArrayList<>();//Array dos pokemons que serão pegos pelos ids
+        
+        while(!entrada.equals("FIM")){
+            String id = entrada.trim();
+            
+            Pokemon pokemon = new Pokemon();
+            pokemon.read(id);
+            pokemons.add(pokemon);
+            entrada = sc.nextLine();
+        }
+        sc.close();
+
+        Pokemon []pokes = new Pokemon[pokemons.size()];
+
+        int i=0;
+        for(Pokemon pokemon : pokemons){
+            pokes[i] = pokemon;
+            i++;
+        }
+
+        insertionSort(pokes);
 
         for(i=0;i<pokes.length;i++){
             pokes[i].print();
