@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define CSV_FILE_PATH "/tmp/pokemon.csv" //C:\Users\gugsh\Documents\GitHub\Estudos\Aeds II\tmp\pokemon.csv
 #define IDNUBMERS_AND_MAXTAM_FILE 802
@@ -63,6 +64,10 @@ void radix_sort(pokemon *pokes, int n, int tam_ability, int tam_name);
 int get_char_val(const char *ability, int pos);
 int calcular_tam_max_nome(pokemon *pokes, int n);
 int calcular_tam_max_ability(pokemon *pokes, int n) ;
+void insertion_sort_parcial(pokemon *pokes, int n,int k);
+struct tm create_date(int day, int month, int year);
+int compare_dates(struct tm date1, struct tm date2);
+struct tm string_to_date(const char *date_str);
 
 
 //Funções de uso geral-->
@@ -969,6 +974,149 @@ int calcular_tam_max_ability(pokemon *pokes, int n) {
 
 
 
+/*int main(){
+  char entrada[200];
+   int result;          
+   int i,j=0,count=0;
+    //printf("1\n");
+    pokemon pokemons[IDNUBMERS_AND_MAXTAM_FILE];
+    preencherVetor(pokemons);
+    
+    pokemon *temp = malloc(IDNUBMERS_AND_MAXTAM_FILE*sizeof(pokemon));
+
+    //printf("2\n");
+    scanf("%s" , entrada);
+
+    while(strcmp(entrada,"FIM")!=0){
+
+        for(i=0; i< IDNUBMERS_AND_MAXTAM_FILE;i++){
+            result = strcmp(pokemons[i].id,entrada);
+            if(result == 0){
+                temp[j] =  pokemons[i];
+                //printf("tmp:%s pokes:%s \n",temp[j].name,pokemons[i].name);
+                count++;
+                j++;
+            }
+        }
+        scanf("%s",entrada);
+    }
+    pokemon pokemons_salvos[count];
+
+    for(i=0; i < count; i++){
+    pokemons_salvos[i] = temp[i];
+    //printf("pokes:%s tmp:%s  \n",pokemons_salvos[i].name,temp[i].name);
+    }
+
+
+    free(temp);
+    // Imprime pokemons_salvos antes do qsort para verificar
+    /*printf("Pokémons salvos antes de ordenar:\n");
+    for (i = 0; i < count; i++) {
+        printf("ID: %s, Nome: %s\n", pokemons_salvos[i].id, pokemons_salvos[i].name);
+    }
+
+     // Ordena a lista de pokemons salvos por nome
+
+    int tam_nome = calcular_tam_max_nome(pokemons_salvos, count);
+    int tam_ability = calcular_tam_max_ability(pokemons_salvos, count);
+
+    radix_sort(pokemons_salvos, count, tam_ability, tam_nome);
+
+
+    /*printf("Lista de Pokémons ordenada:\n");
+    for (i = 0; i < count; i++) {
+        printf("%s\n", pokemons_salvos[i].name);
+    }
+
+    foreach(poke, pokemons_salvos, count) {
+    imprimir(*poke);
+    }
+
+
+    return 0;
+}*/
+
+//Q16->
+
+/// Função de ordenação por inserção parcial (ordena os primeiros k elementos)
+void insertion_sort_parcial(pokemon *pokes, int n, int k) {
+    int i, j;
+
+    for (i = 1; i < n; i++) {
+        pokemon tmp = pokes[i];
+        struct tm tmp_date = string_to_date(tmp.capture_date);
+        j = i - 1;
+
+        // Desloca os elementos maiores que tmp para a direita
+        while (j >= 0) {
+            struct tm pokes_j_date = string_to_date(pokes[j].capture_date);
+            
+            // Se a data de tmp for anterior à de pokes[j], move pokes[j] para frente
+            if (compare_dates(tmp_date, pokes_j_date) < 0) {
+                pokes[j + 1] = pokes[j];  // Desloca o Pokémon para a direita
+            } else {
+                break;  // Encontra a posição correta
+            }
+            j--;
+        }
+        pokes[j + 1] = tmp;  // Insere o Pokémon na posição correta
+    }
+}
+
+// Função para converter uma string no formato "dd/mm/yyyy" para struct tm
+struct tm string_to_date(const char *date_str) {
+    struct tm date = {0};  // Inicializa a estrutura tm com 0
+    int day, month, year;
+
+    // Usa sscanf para fazer o parsing da string
+    sscanf(date_str, "%d/%d/%d", &day, &month, &year);
+    day -=48;
+    month -=48;
+    year -=48;
+
+    // Preenche os campos da estrutura tm
+    date.tm_mday = day;
+    date.tm_mon = month - 1;  // Mês começa em 0 (Janeiro = 0)
+    date.tm_year = year - 1900;  // Anos desde 1900
+
+    return date;
+}
+
+struct tm create_date(int day, int month, int year) {
+    struct tm date = {0};  // Inicializa a estrutura tm com 0
+    date.tm_mday = day;    // Define o dia
+    date.tm_mon = month - 1;  // Mês, ajustado para começar em 0 (Janeiro = 0)
+    date.tm_year = year - 1900;  // Anos desde 1900
+    return date;
+}
+
+// Função para comparar duas datas (struct tm)
+int compare_dates(struct tm date1, struct tm date2) {
+    // Compara os anos
+    if (date1.tm_year < date2.tm_year) {
+        return -1;
+    } else if (date1.tm_year > date2.tm_year) {
+        return 1;
+    }
+
+    // Se os anos forem iguais, compara os meses
+    if (date1.tm_mon < date2.tm_mon) {
+        return -1;
+    } else if (date1.tm_mon > date2.tm_mon) {
+        return 1;
+    }
+
+    // Se os meses forem iguais, compara os dias
+    if (date1.tm_mday < date2.tm_mday) {
+        return -1;
+    } else if (date1.tm_mday > date2.tm_mday) {
+        return 1;
+    }
+
+    // As datas são iguais
+}
+
+
 int main(){
   char entrada[200];
    int result;          
@@ -1012,10 +1160,7 @@ int main(){
 
      // Ordena a lista de pokemons salvos por nome
 
-    int tam_nome = calcular_tam_max_nome(pokemons_salvos, count);
-    int tam_ability = calcular_tam_max_ability(pokemons_salvos, count);
-
-    radix_sort(pokemons_salvos, count, tam_ability, tam_nome);
+    insertion_sort_parcial(pokemons_salvos,count,10);
 
 
     /*printf("Lista de Pokémons ordenada:\n");
@@ -1023,7 +1168,7 @@ int main(){
         printf("%s\n", pokemons_salvos[i].name);
     }*/
 
-    foreach(poke, pokemons_salvos, count) {
+    foreach(poke, pokemons_salvos, 10) {
     imprimir(*poke);
     }
 
