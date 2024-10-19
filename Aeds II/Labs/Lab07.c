@@ -13,6 +13,7 @@ int contarUltrapassagens(int* largada, int* chegada, int n) {
     for (int i = 0; i < n; i++) {
         pos_largada[largada[i]] = i; 
     }
+
     /*
     i=0, largada[i] = largada[0]=>1
     pos_largada[largada[i]] = pos_largada[largada[0]] = pos_largada[1]=>0
@@ -61,3 +62,4 @@ int main() {
 
     return 0;
 }
+
