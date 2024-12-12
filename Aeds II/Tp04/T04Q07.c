@@ -22,10 +22,6 @@ typedef struct lista{
     int n;                              //Quantidade de elementos presentes atualmente na lista
 }lista;
 
-typedef struct hash{
-    poke_lista table[21];
-    int size;
-}hash;
 
 typedef struct pokemon{
     char id[4];                        //id é um int que vai de 0-800
@@ -50,6 +46,11 @@ typedef struct celula_dupla{
 typedef struct poke_lista{
     celula_dupla *primeiro,*ultimo;
 }poke_lista;
+
+
+typedef struct hash{
+    poke_lista *table[21];
+}hash;
 
 //Prototypes:
 char **str_split(char*, const char);
@@ -583,18 +584,65 @@ pokemon remover(poke_lista* lista,int pos){
     return resp;
 }
 
-void hash_indireto_start(int size, hash* tabela){
-    hash.size = size;
+// Função de hash
+unsigned int hash_func(char *nome) {
+    unsigned int hash = 0;
+    int i;
+    for( i=0;i<strlen(nome);i++){
+        hash+=nome[i];
+    }
+
+    return hash % 21;
 }
 
-void hash_start(hash* tabela){
-    int i;
-    hash* tabela = malloc(sizeof(hash)*21);
-    for(i=0;i<21;i++){
-        tabela[i] = NULL;
+poke_lista* poke_start_2() {
+    poke_lista* lista = (poke_lista*)malloc(sizeof(poke_lista));
+    if (lista == NULL) {
+        printf("Erro ao alocar memória para poke_lista.\n");
+        exit(1);
     }
-    hash_indireto_start(21,tabela);
+    lista->primeiro = nova_celula_dupla(construtor_vazio());
+    lista->ultimo = lista->primeiro;
+    return lista;
 }
+
+
+hash* hash_start() {
+    hash* tabela = (hash*)malloc(sizeof(hash));
+    int i;
+    for (i = 0; i < 21; i++) {
+        tabela->table[i] = poke_start_2();
+    }
+    return tabela;
+}
+
+
+void hash_inserir(hash* tabela, pokemon p) {
+    int indice = hash_func(p.name);
+    if (tabela->table[indice] == NULL) {
+        tabela->table[indice] = poke_start_2();
+    }
+    poke_inserir_fim(tabela->table[indice], p);
+}
+
+
+pokemon* hash_pesquisar(hash* tabela, char* nome) {
+    int indice = hash_func(nome);
+    poke_lista* lista = tabela->table[indice];
+    if (lista == NULL) {
+        return NULL; // Nenhum elemento no índice da hash
+    }
+    celula_dupla* i;
+    for (i = lista->primeiro->prox; i != NULL; i = i->prox) {
+        if (strcmp(i->elemento.name, nome) == 0) {
+            return &i->elemento;
+        }
+    }
+    return NULL;
+}
+
+
+
 
 
 
@@ -606,8 +654,7 @@ int main(){
     pokemon pokemons[IDNUBMERS_AND_MAXTAM_FILE];
     preencherVetor(pokemons);
     
-    hash hashTable;
-    hash_start(&hashTable);
+    hash* hashTable = hash_start();
 
     //printf("2\n");
     scanf("%s" , entrada);
@@ -617,7 +664,7 @@ int main(){
         for(i=0; i< IDNUBMERS_AND_MAXTAM_FILE;i++){
             result = strcmp(pokemons[i].id,entrada);
             if(result == 0){
-               poke_inserir_fim(&lista,pokemons[i]);
+               hash_inserir(hashTable,pokemons[i]);
                 //printf("tmp:%s pokes:%s \n",temp[j].name,pokemons[i].name);
                 count++;
                 j++;
@@ -625,31 +672,20 @@ int main(){
         }
         scanf("%s",entrada);
     }
-    pokemon pokemons_salvos[count];
 
-    for(i=0; i < count; i++){
-    pokemons_salvos[i] = poke_remover_inicio(&lista);
-    //printf("pokes:%s tmp:%s  \n",pokemons_salvos[i].name,temp[i].name);
+    scanf("%s", entrada);
+    while (strcmp(entrada, "FIM") != 0) {
+        int indice = hash_func(entrada); // Calcula a posição na tabela hash
+        pokemon* p = hash_pesquisar(hashTable, entrada);
+        if (p != NULL) {
+            printf("=> %s: (posicao: %d) SIM\n", entrada,indice);
+        } else {
+            printf("=> %s: NAO\n", entrada);
+        }
+        scanf("%s", entrada);
     }
 
-    // Imprime pokemons_salvos antes do qsort para verificar
-    /*printf("Pokémons salvos antes de ordenar:\n");
-    for (i = 0; i < count; i++) {
-        printf("ID: %s, Nome: %s\n", pokemons_salvos[i].id, pokemons_salvos[i].name);
-    }*/
 
-     // Ordena a lista de pokemons salvos por nome
-
-    qsort(pokemons_salvos, count, sizeof(pokemon), comparar_pokemon);
-
-    /*printf("Lista de Pokémons ordenada:\n");
-    for (i = 0; i < count; i++) {
-        printf("%s\n", pokemons_salvos[i].name);
-    }*/
-
-    foreach(poke, pokemons_salvos, count) {
-    imprimir(*poke);
-    }
 
 
     return 0;
