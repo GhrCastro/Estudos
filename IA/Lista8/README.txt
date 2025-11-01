@@ -13,6 +13,5 @@ Como executar (Python 3.8+):
 python Estudos/I.A/Lista8/main.py
 
 Observação: a saída usa codificação binária de 4 bits para representar dígitos 0–9.
-Se quiser usar one-hot com 10 saídas, ajuste o tamanho da camada de saída e as
-funções de codificação em seven_segment.py.
+
 
