@@ -276,3 +276,19 @@ mysql -uesii -p123456 -e "USE esii_pedidos; SELECT * FROM Produtos; SELECT * FRO
 ```
 
 Se as tabelas tiverem registros apos os testes pela interface/Swagger, o prototipo esta funcionando corretamente.
+
+## 11) Prints das telas:
+<img width="1903" height="975" alt="image" src="https://github.com/user-attachments/assets/843492bc-4e84-40a4-982a-9bab43580227" />
+
+<img width="1705" height="939" alt="image" src="https://github.com/user-attachments/assets/90ee4beb-dad0-4448-8526-366640b99c68" />
+
+<img width="1592" height="873" alt="image" src="https://github.com/user-attachments/assets/044f4ec3-6a4c-4426-9013-cd7e3e1d0ad2" />
+
+<img width="1517" height="861" alt="image" src="https://github.com/user-attachments/assets/aa89affa-4360-40d6-a82a-2d71c908c4cd" />
+
+<img width="1705" height="893" alt="image" src="https://github.com/user-attachments/assets/333ff590-237b-454a-8af3-d3eb3f32c7dd" />
+
+<img width="1650" height="731" alt="image" src="https://github.com/user-attachments/assets/4bbd3d1f-f10f-4da4-8078-89f5f86eb570" />
+
+
+
