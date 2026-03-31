@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projeto ESII - Prototipo</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --line: #d7deea;
+      --text: #1f2937;
+      --muted: #556277;
+      --accent: #0c5ec6;
+      --danger: #c62828;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 0 0, #e8eef8 0, transparent 40%), var(--bg);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+    }
+
+    .hero {
+      background: linear-gradient(130deg, #0c5ec6, #2f80d8);
+      color: #fff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 10px 28px rgba(10, 46, 92, 0.22);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid #c6d1e0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: #eaf1fb;
+      color: #204874;
+    }
+
+    .btn-danger {
+      background: #fde7e7;
+      color: var(--danger);
+    }
+
+    .table-wrap {
+      max-height: 260px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #e6ebf4;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f2f6fd;
+      z-index: 1;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #edf5ff;
+      border: 1px solid #bfd8fa;
+      color: #184c86;
+      min-height: 40px;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 680px) {
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Projeto ESII - Prototipo de Pedidos</h1>
+      <p>Interface simples para testar CRUD da API com MySQL (Produtos, Pedidos e Itens).</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Produto</h2>
+        <form id="produtoForm">
+          <div class="row">
+            <div class="field">
+              <label for="nome">Nome</label>
+              <input id="nome" required>
+            </div>
+            <div class="field">
+              <label for="tipo">Tipo</label>
+              <select id="tipo">
+                <option value="Comum">Comum</option>
+                <option value="Eletronico">Eletronico</option>
+                <option value="Perecivel">Perecivel</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="preco">Preco</label>
+              <input id="preco" type="number" step="0.01" min="0" required>
+            </div>
+            <div class="field">
+              <label for="estoque">Estoque</label>
+              <input id="estoque" type="number" min="0" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" id="voltagemField" hidden>
+              <label for="voltagem">Voltagem</label>
+              <input id="voltagem" type="number" min="1">
+            </div>
+            <div class="field" id="dataValidadeField" hidden>
+              <label for="dataValidade">Data de validade</label>
+              <input id="dataValidade" type="datetime-local">
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn" type="submit">Cadastrar produto</button>
+            <button class="btn-ghost" type="button" id="refreshProdutos">Atualizar lista</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="card">
+        <h2>Pedido</h2>
+        <form id="pedidoForm">
+          <div class="field">
+            <label for="pedidoData">Data (opcional)</label>
+            <input id="pedidoData" type="datetime-local">
+          </div>
+          <div class="actions">
+            <button class="btn" type="submit">Cadastrar pedido</button>
+            <button class="btn-ghost" type="button" id="refreshPedidos">Atualizar lista</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="card">
+        <h2>Item do pedido</h2>
+        <form id="itemForm">
+          <div class="row">
+            <div class="field">
+              <label for="pedidoId">Pedido</label>
+              <select id="pedidoId"></select>
+            </div>
+            <div class="field">
+              <label for="produtoId">Produto</label>
+              <select id="produtoId"></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="quantidade">Quantidade</label>
+            <input id="quantidade" type="number" min="1" required>
+          </div>
+          <div class="actions">
+            <button class="btn" type="submit">Adicionar item</button>
+            <button class="btn-ghost" type="button" id="refreshItens">Atualizar lista</button>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Produtos cadastrados</h2>
+        <div class="table-wrap">
+          <table id="produtosTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Preco</th>
+                <th>Estoque</th>
+                <th>Acao</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Pedidos cadastrados</h2>
+        <div class="table-wrap">
+          <table id="pedidosTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Data</th>
+                <th>Valor total</th>
+                <th>Itens</th>
+                <th>Acao</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Itens cadastrados</h2>
+        <div class="table-wrap">
+          <table id="itensTable">
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Pedido</th>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>Valor item</th>
+                <th>Acao</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="status" id="status">Pronto para testar.</section>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const produtoForm = document.getElementById("produtoForm");
+    const pedidoForm = document.getElementById("pedidoForm");
+    const itemForm = document.getElementById("itemForm");
+
+    const tipoEl = document.getElementById("tipo");
+    const voltagemField = document.getElementById("voltagemField");
+    const dataValidadeField = document.getElementById("dataValidadeField");
+
+    const pedidoIdEl = document.getElementById("pedidoId");
+    const produtoIdEl = document.getElementById("produtoId");
+
+    async function api(method, url, body) {
+      const options = {
+        method,
+        headers: { "Content-Type": "application/json" }
+      };
+      if (body) options.body = JSON.stringify(body);
+
+      const response = await fetch(url, options);
+      const text = await response.text();
+      const payload = text ? JSON.parse(text) : null;
+
+      if (!response.ok) {
+        const message = typeof payload === "string"
+          ? payload
+          : payload?.title || payload?.message || text || "Erro na requisicao.";
+        throw new Error(message);
+      }
+      return payload;
+    }
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return new Date(value).toLocaleString("pt-BR");
+    }
+
+    function toggleTipoFields() {
+      const tipo = tipoEl.value;
+      voltagemField.hidden = tipo !== "Eletronico";
+      dataValidadeField.hidden = tipo !== "Perecivel";
+    }
+
+    async function loadProdutos() {
+      const produtos = await api("GET", "/api/produtos");
+      const tbody = document.querySelector("#produtosTable tbody");
+      tbody.innerHTML = "";
+
+      produtoIdEl.innerHTML = "";
+      for (const p of produtos) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.id}</td>
+          <td>${p.nome}</td>
+          <td>${p.tipo}</td>
+          <td>${Number(p.preco).toFixed(2)}</td>
+          <td>${p.estoque}</td>
+          <td><button class="btn-danger" data-delete-produto="${p.id}">Excluir</button></td>
+        `;
+        tbody.appendChild(tr);
+
+        const option = document.createElement("option");
+        option.value = p.id;
+        option.textContent = `${p.id} - ${p.nome} (${p.tipo})`;
+        produtoIdEl.appendChild(option);
+      }
+    }
+
+    async function loadPedidos() {
+      const pedidos = await api("GET", "/api/pedidos");
+      const tbody = document.querySelector("#pedidosTable tbody");
+      tbody.innerHTML = "";
+
+      pedidoIdEl.innerHTML = "";
+      for (const p of pedidos) {
+        const itensDescricao = (p.itens || [])
+          .map(i => `${i.quantidade}x ${i.nomeProduto || ("Produto " + i.produtoId)}`)
+          .join("; ");
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.id}</td>
+          <td>${formatDate(p.data)}</td>
+          <td>${Number(p.valorTotal).toFixed(2)}</td>
+          <td>${itensDescricao || "-"}</td>
+          <td><button class="btn-danger" data-delete-pedido="${p.id}">Excluir</button></td>
+        `;
+        tbody.appendChild(tr);
+
+        const option = document.createElement("option");
+        option.value = p.id;
+        option.textContent = `Pedido ${p.id} - ${formatDate(p.data)}`;
+        pedidoIdEl.appendChild(option);
+      }
+    }
+
+    async function loadItens() {
+      const itens = await api("GET", "/api/itens");
+      const tbody = document.querySelector("#itensTable tbody");
+      tbody.innerHTML = "";
+
+      for (const i of itens) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i.codigoItem}</td>
+          <td>${i.pedidoId}</td>
+          <td>${i.produtoId} - ${i.nomeProduto || "-"}</td>
+          <td>${i.quantidade}</td>
+          <td>${Number(i.valorItem).toFixed(2)}</td>
+          <td><button class="btn-danger" data-delete-item="${i.codigoItem}">Excluir</button></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function refreshAll() {
+      await Promise.all([loadProdutos(), loadPedidos(), loadItens()]);
+    }
+
+    produtoForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        const tipo = tipoEl.value;
+        const dto = {
+          nome: document.getElementById("nome").value,
+          preco: Number(document.getElementById("preco").value),
+          estoque: Number(document.getElementById("estoque").value)
+        };
+
+        let endpoint = "/api/produtos";
+        if (tipo === "Eletronico") {
+          endpoint = "/api/produtos/eletronicos";
+          dto.voltagem = Number(document.getElementById("voltagem").value);
+        } else if (tipo === "Perecivel") {
+          endpoint = "/api/produtos/pereciveis";
+          const validade = document.getElementById("dataValidade").value;
+          dto.dataValidade = validade ? new Date(validade).toISOString() : null;
+        }
+
+        await api("POST", endpoint, dto);
+        produtoForm.reset();
+        toggleTipoFields();
+        await refreshAll();
+        setStatus("Produto cadastrado com sucesso.");
+      } catch (error) {
+        setStatus("Erro ao cadastrar produto: " + error.message);
+      }
+    });
+
+    pedidoForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        const data = document.getElementById("pedidoData").value;
+        await api("POST", "/api/pedidos", {
+          data: data ? new Date(data).toISOString() : null
+        });
+        pedidoForm.reset();
+        await refreshAll();
+        setStatus("Pedido cadastrado com sucesso.");
+      } catch (error) {
+        setStatus("Erro ao cadastrar pedido: " + error.message);
+      }
+    });
+
+    itemForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        await api("POST", "/api/itens", {
+          pedidoId: Number(pedidoIdEl.value),
+          produtoId: Number(produtoIdEl.value),
+          quantidade: Number(document.getElementById("quantidade").value)
+        });
+        itemForm.reset();
+        await refreshAll();
+        setStatus("Item adicionado com sucesso.");
+      } catch (error) {
+        setStatus("Erro ao adicionar item: " + error.message);
+      }
+    });
+
+    document.getElementById("refreshProdutos").addEventListener("click", async () => {
+      try {
+        await loadProdutos();
+        setStatus("Lista de produtos atualizada.");
+      } catch (error) {
+        setStatus("Erro ao atualizar produtos: " + error.message);
+      }
+    });
+
+    document.getElementById("refreshPedidos").addEventListener("click", async () => {
+      try {
+        await loadPedidos();
+        setStatus("Lista de pedidos atualizada.");
+      } catch (error) {
+        setStatus("Erro ao atualizar pedidos: " + error.message);
+      }
+    });
+
+    document.getElementById("refreshItens").addEventListener("click", async () => {
+      try {
+        await loadItens();
+        setStatus("Lista de itens atualizada.");
+      } catch (error) {
+        setStatus("Erro ao atualizar itens: " + error.message);
+      }
+    });
+
+    document.body.addEventListener("click", async (event) => {
+      const produtoId = event.target.getAttribute("data-delete-produto");
+      const pedidoId = event.target.getAttribute("data-delete-pedido");
+      const itemId = event.target.getAttribute("data-delete-item");
+
+      try {
+        if (produtoId) {
+          await api("DELETE", "/api/produtos/" + produtoId);
+          await refreshAll();
+          setStatus("Produto excluido.");
+          return;
+        }
+
+        if (pedidoId) {
+          await api("DELETE", "/api/pedidos/" + pedidoId);
+          await refreshAll();
+          setStatus("Pedido excluido.");
+          return;
+        }
+
+        if (itemId) {
+          await api("DELETE", "/api/itens/" + itemId);
+          await refreshAll();
+          setStatus("Item excluido.");
+        }
+      } catch (error) {
+        setStatus("Erro ao excluir: " + error.message);
+      }
+    });
+
+    tipoEl.addEventListener("change", toggleTipoFields);
+
+    (async function init() {
+      toggleTipoFields();
+      try {
+        await refreshAll();
+        setStatus("Pronto para testar.");
+      } catch (error) {
+        setStatus("Erro ao carregar dados iniciais: " + error.message);
+      }
+    }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+@ProjetoPedidos_HostAddress = http://localhost:5249
+
+POST {{ProjetoPedidos_HostAddress}}/api/produtos/eletronicos
+Content-Type: application/json
+
+{
+  "nome": "Notebook",
+  "preco": 3500.00,
+  "estoque": 15,
+  "voltagem": 220
+}
+
+###
+
+POST {{ProjetoPedidos_HostAddress}}/api/produtos/pereciveis
+Content-Type: application/json
+
+{
+  "nome": "Iogurte",
+  "preco": 8.50,
+  "estoque": 100,
+  "dataValidade": "2026-06-30T00:00:00"
+}
+
+###
+
+POST {{ProjetoPedidos_HostAddress}}/api/pedidos
+Content-Type: application/json
+
+{
+  "data": "2026-03-31T10:30:00"
+}
+
+###
+
+POST {{ProjetoPedidos_HostAddress}}/api/itens
+Content-Type: application/json
+
+{
+  "pedidoId": 1,
+  "produtoId": 1,
+  "quantidade": 2
+}
+
+###
+
+GET {{ProjetoPedidos_HostAddress}}/api/pedidos/1
+Accept: application/json
+
+###
